@@ -69,7 +69,12 @@ I mainly focused on accuracy, but also I take into consideration the speed at wh
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-In the section titled "Extracting Features" I trained a linear SVM with the default classifier parameters and using HOG features, spatial intensity and channel intensity histogram features all together and was able to achieve a test accuracy of 98.11%.
+A `LinearSVC` was used with default classifier parameters as a classifier. The training process was included in the section titled "Extracting Features". I used HOG features, spatial intensity features and channel intensity histogram features all together. By tuning the parameters above, the length of feature vector changes. The longer the feature vector is the more features available for classifier to use, usually this means better accuracy. However, if too much features are available may also cause overfitting and the runtime of extracting features will also increasing significantly. As a result, I choose chosen the parameters I think give a balance between accuracy and runtime.
+
+I also performed normalization of the features and random shuffling of data before training classifier to improve the robustness and performance of the classifier.
+
+
+My classifier was able to achieve a test accuracy of 98.11%.
 
 ### Sliding Window Search
 
@@ -89,13 +94,17 @@ Finally I choose the following list of parameters:
 `ystop_list = [490, 490, 556, 556, 556, 656]`
 `scale_list = [1.0, 1.0, 1.6, 2.0, 2.2, 3.0]`
 
-Then in section 'Multiple Detections & False Positives' I applied Heatmap with threshold to improve the performance. `add_heat` and `apply_threshold` functions are adapted from course material. The add_heat function increments the pixel value (referred to as "heat") of an all-black image the size of the original image at the location of each detection rectangle. Areas encompassed by more overlapping rectangles are assigned higher levels of heat. The following image is the resulting heatmap from the detections in the image above:
+Then in section 'Multiple Detections & False Positives' I applied Heatmap with threshold to improve the performance. `add_heat` and `apply_threshold` functions are adapted from course material to reduce false positives. The add_heat function increments the pixel value (referred to as "heat") of an all-black image the size of the original image at the location of each detection rectangle. Areas encompassed by more overlapping rectangles are assigned higher levels of heat. 
+
+The following image is the resulting heatmap from the detections in the image above:
 
 ![alt text][image4]
 
 And the final detection area is set to the extremities of each identified label:
 
 ![alt text][image5]
+
+Compared with the result in the previous section, we can see that at first one car on the other side of the road and one false positive were detected at first, then after applied heatmap which was then thresholded, the false positive detection was removed.
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
